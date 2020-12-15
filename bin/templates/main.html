@@ -1,0 +1,9 @@
+{# empty Twig template #}
+
+<ul>
+    {% for link in links %}
+        <li>
+            <a href="/{{link.route|e}}">{{ link.title|e }}</a>
+        </li>
+    {% endfor %}
+</ul>

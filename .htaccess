@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+
+RewriteBase /bin/
+#RewriteCond %{REQUEST_METHOD} POST
+#RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/]+)/?$ /bin/routes.php?action=$1 [QSA,L]
+RewriteRule ^([^/]+)/(\w+)/?$ /bin/routes.php?action=$1&param=$2 [QSA,L]
+
+php_flag register_globals on
+</IfModule>

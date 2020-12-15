@@ -1,0 +1,17 @@
+<?php return array (
+  'DB_CONNECTION' => 'mysql',
+  'DB_HOST' => '127.0.0.1',
+  'DB_PORT' => '3306',
+  'DB_SOURCE' => 'timetracker_live',
+  'DB_TARGET' => 'timetracker_migrated',
+  'DB_LIVE_SOURCE' => 'timetracker_live',
+  'DB_SOURCE_DOWNGRADE' => 'timetracker_migrated',
+  'DB_TARGET_DOWNGRADE' => 'timetracker_v1',
+  'MIGRATION_DATE' => '2020-12-14 20:46:11',
+  'DB_USERNAME' => 'root',
+  'DB_PASSWORD' => '1111',
+  'ADMIN_NAME' => 'Administrator',
+  'ADMIN_EMAIL' => 'admin-test@mail.tst',
+  'ADMIN_LOGIN' => 'admin',
+  'ADMIN_PASS' => '11223344',
+) ;
