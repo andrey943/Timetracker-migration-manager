@@ -210,7 +210,7 @@ class DowngradeMigration {
                 'target' => $this->config['DB_TARGET_DOWNGRADE'],
             ];
             echo renderPage('projects_relationships_list.html', $pageData);
-            //$this->addNewProjectsRelationships();
+            $this->addNewProjectsRelationships();
         }
     }
 

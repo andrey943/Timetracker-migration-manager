@@ -1,38 +1,28 @@
-INSERT INTO `timetracker_downgrade_migration_temp`.`projects` ( 
-	`name`,
-	`created`,
-	`modified`,
-	`status`,
-        `uuid`
+INSERT INTO `@target_database@`.`users_projects_xref` (
+	`uid`,
+	`pid`,
+	`did_alias`
     )
-(SELECT * FROM (
+SELECT * FROM (
     SELECT
-        `tmp`.`name`,
-        `tmp`.`created_at` `created`, 
-        `tmp`.`updated_at` `modified`,
-        IF (`tmp`.`is_active`='1', 'active', 'hidden') `status`,
-        `tmp`.`id` uuid
-    FROM  `@source_database@`.`projects` tmp
-    LEFT JOIN `@source_database@`.`projects_temp` tmtp  
-        ON tmtp.uuid = tmp.id 
-    WHERE tmtp.name IS NULL
-) as x);
-
-
-INSERT INTO `@target_database@`.`projects` (
-        `id`,
-	`name`,
-	`created`,
-	`modified`,
-	`status`
-    )
-SELECT
-        `tdmtp`.`id`,
-	`tdmtp`.`name`,
-	`tdmtp`.`created`,
-	`tdmtp`.`modified`,
-	`tdmtp`.`status`
-FROM  `timetracker_downgrade_migration_temp`.`projects` tdmtp 
-LEFT JOIN `@source_live@`.`projects` tlp  
-    ON tdmtp.id = tlp.id 
-WHERE  (tlp.id IS NULL) AND `tdmtp`.`created` > "@start_date@";
+        `tu`.`id` `uid`,
+        `tp`.`id` `pid`,
+        IF (`aliases`.`id` IS NULL, 0, `aliases`.`id`) `did_alias`
+    FROM `@source_database@`.`project_user` pu 
+        JOIN `timetracker_downgrade_migration_temp`.`projects` tp ON `pu`.`project_id` = `tp`.`uuid`
+        JOIN `timetracker_downgrade_migration_temp`.`users` tu ON `pu`.`user_id` = `tu`.`uuid`
+        LEFT JOIN `@source_database@`.`user_aliases` ua 
+            ON `ua`.`project_id` = `pu`.`project_id` 
+            AND `ua`.`user_id` = `pu`.`user_id`
+        LEFT JOIN `timetracker_downgrade_migration_temp`.`users` aliases ON `aliases`.`uuid` = `ua`.`alias_id`
+    WHERE `pu`.`created_at` > "@start_date@" OR `ua`.`created_at` > "@start_date@"
+    UNION
+    SELECT 
+        `tu`.`id` `uid`,
+        `tp`.`id` `pid`,
+        0 `alias_name`
+    FROM `@source_database@`.`project_pm` pu 
+        JOIN `timetracker_downgrade_migration_temp`.`projects` tp ON `pu`.`project_id` = `tp`.`uuid`
+        JOIN `timetracker_downgrade_migration_temp`.`users` tu ON `pu`.`user_id` = `tu`.`uuid`
+    WHERE `pu`.`created_at` > "@start_date@"
+    ) AS tbl;

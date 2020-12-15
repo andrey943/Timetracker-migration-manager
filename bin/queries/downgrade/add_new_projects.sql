@@ -36,5 +36,4 @@ FROM  `timetracker_downgrade_migration_temp`.`projects` tdmtp
 LEFT JOIN `@source_live@`.`projects` tlp  
     ON tdmtp.id = tlp.id 
 WHERE  (tlp.id IS NULL) 
-    AND `tdmtp`.`created` > "@start_date@"
-    AND `tdmtp`.`status` = 'active';
+    AND `tdmtp`.`created` > "@start_date@";
