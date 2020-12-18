@@ -55,8 +55,8 @@ class DowngradeMigration {
         $this->importProjects();
         $this->importHourTypes();
         $this->importProjectsRelationships();
-//        $this->importInvoicePeriods();
-//        $this->importPaymentPeriods();
+        $this->importInvoicePeriods();
+        $this->importPaymentPeriods();
 //        $this->importAliases();
         $this->importTimeEntries();
 //        $this->importUsersHoursTypes();
@@ -226,12 +226,52 @@ class DowngradeMigration {
 
     private function importInvoicePeriods() {
 
-        return $this->executeFileQuery('invoice_periods_migration.sql');
+        $this->executeFileQuery('invoice_periods_migration.sql');
+
+        if ($periods = $this->checkNewInvoicePeriods()) {
+            $pageData = [
+                'periods' => $periods,
+                'source' => $this->config['DB_SOURCE_DOWNGRADE'],
+                'target' => $this->config['DB_TARGET_DOWNGRADE'],
+            ];
+            echo renderPage('invoice_periods_list.html', $pageData);
+            $this->addNewInvoicePeriods();
+        }
+    }
+
+    private function checkNewInvoicePeriods() {
+
+        return $this->executeFileQuery('check_new_invoice_periods.sql');
+    }
+
+    private function addNewInvoicePeriods() {
+
+        return $this->executeFileQuery('add_new_invoice_periods.sql');
     }
 
     private function importPaymentPeriods() {
 
-        return $this->executeFileQuery('payment_periods_migration.sql');
+        $this->executeFileQuery('payment_periods_migration.sql');
+
+        if ($periods = $this->checkNewPaymentPeriods()) {
+            $pageData = [
+                'periods' => $periods,
+                'source' => $this->config['DB_SOURCE_DOWNGRADE'],
+                'target' => $this->config['DB_TARGET_DOWNGRADE'],
+            ];
+            echo renderPage('payment_periods_list.html', $pageData);
+            $this->addNewPaymentPeriods();
+        }
+    }
+
+    private function checkNewPaymentPeriods() {
+
+        return $this->executeFileQuery('check_new_payment_periods.sql');
+    }
+
+    private function addNewPaymentPeriods() {
+
+        return $this->executeFileQuery('add_new_payment_periods.sql');
     }
 
     private function importAliases() {

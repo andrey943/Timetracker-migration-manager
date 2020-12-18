@@ -39,6 +39,8 @@ INSERT INTO `@target_database@`.`payment_periods` (
         `id`,
 	`start_date`,
 	`end_date`,
+        `created_at`,
+        `updated_at`,
 	`is_open`,
 	`user_id`
     )
@@ -47,6 +49,8 @@ INSERT INTO `@target_database@`.`payment_periods` (
         UUID() id,
         `@source_database@`.`payment_periods`.`start_date` start_date,
         `@source_database@`.`payment_periods`.`end_date` end_date,
+        UTC_TIMESTAMP() created_at,
+        UTC_TIMESTAMP() updated_at,
         IF(`@source_database@`.`payment_periods`.`end_date` = '' OR `@source_database@`.`payment_periods`.`end_date` IS NULL, 1, 0) is_open,
         `timetracker_migration_temp`.`users`.`uuid` user_id
     FROM `@source_database@`.`payment_periods`
